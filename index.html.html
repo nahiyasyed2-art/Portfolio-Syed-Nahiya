@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Syed Nahiya — ECE Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Fraunces:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0b0c10;
+    --surface: #13151a;
+    --surface2: #1c1f28;
+    --accent: #00e5c0;
+    --accent2: #7c6af7;
+    --accent3: #f7c26a;
+    --text: #e8eaf0;
+    --muted: #6b7080;
+    --border: rgba(255,255,255,0.07);
+    --glow: rgba(0,229,192,0.18);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 15px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    background-size: 200px;
+    pointer-events: none;
+    opacity: .35;
+  }
+
+  /* ── CURSOR GLOW ── */
+  #cursor-glow {
+    position: fixed;
+    width: 380px; height: 380px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,229,192,.08) 0%, transparent 70%);
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    transition: opacity .3s;
+  }
+
+  /* ── LAYOUT ── */
+  .container { max-width: 960px; margin: 0 auto; padding: 0 28px; position: relative; z-index: 2; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 18px 0;
+    background: rgba(11,12,16,0.82);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--border);
+  }
+  nav .inner {
+    max-width: 960px; margin: 0 auto; padding: 0 28px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 1.1rem;
+    color: var(--accent);
+    letter-spacing: -.01em;
+    text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 28px; list-style: none; }
+  .nav-links a {
+    color: var(--muted); text-decoration: none;
+    font-size: .78rem; letter-spacing: .12em; text-transform: uppercase;
+    transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: flex; align-items: center;
+    padding-top: 80px;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 48px;
+    align-items: center;
+    width: 100%;
+  }
+  .hero-tag {
+    font-size: .72rem; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 18px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .hero-tag::before {
+    content: '';
+    display: inline-block;
+    width: 28px; height: 2px;
+    background: var(--accent);
+  }
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.8rem, 6vw, 4.8rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -.03em;
+    margin-bottom: 20px;
+  }
+  h1 .accent { color: var(--accent); }
+  .hero-sub {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 1.15rem;
+    color: var(--muted);
+    margin-bottom: 36px;
+    max-width: 480px;
+  }
+  .hero-cta {
+    display: flex; gap: 14px; flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 11px 24px;
+    border-radius: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: .78rem; letter-spacing: .06em;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all .22s;
+    cursor: pointer;
+    border: none;
+  }
+  .btn-primary {
+    background: var(--accent); color: #0b0c10;
+    box-shadow: 0 0 22px rgba(0,229,192,.3);
+  }
+  .btn-primary:hover {
+    box-shadow: 0 0 36px rgba(0,229,192,.5);
+    transform: translateY(-1px);
+  }
+  .btn-outline {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+  .btn-outline:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-1px);
+  }
+
+  .hero-badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 24px;
+    text-align: center;
+    min-width: 130px;
+  }
+  .badge-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.4rem; font-weight: 800;
+    color: var(--accent);
+    display: block;
+  }
+  .badge-label { font-size: .68rem; color: var(--muted); letter-spacing: .12em; text-transform: uppercase; }
+
+  /* ── SECTION COMMONS ── */
+  section { padding: 96px 0; }
+  .section-header { margin-bottom: 56px; }
+  .section-num {
+    font-size: .68rem; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--accent2); margin-bottom: 8px;
+  }
+  h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+    font-weight: 700; letter-spacing: -.02em;
+    line-height: 1.1;
+  }
+  .divider {
+    width: 40px; height: 3px;
+    background: var(--accent);
+    margin-top: 14px;
+    border-radius: 2px;
+  }
+
+  /* ── ABOUT ── */
+  #about .about-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 56px;
+    align-items: start;
+  }
+  .about-text p { color: var(--muted); margin-bottom: 16px; }
+  .about-text p span { color: var(--text); }
+
+  .info-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+  }
+  .info-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .info-row:last-child { border-bottom: none; }
+  .info-key { color: var(--muted); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; min-width: 80px; padding-top: 2px; }
+  .info-val { color: var(--text); font-size: .85rem; }
+  .info-val a { color: var(--accent); text-decoration: none; }
+  .info-val a:hover { text-decoration: underline; }
+
+  /* ── SKILLS ── */
+  #skills { background: var(--surface); }
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+  }
+  .skill-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 20px;
+    transition: border-color .2s, transform .2s, box-shadow .2s;
+  }
+  .skill-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0,229,192,.08);
+  }
+  .skill-icon { font-size: 1.5rem; margin-bottom: 10px; }
+  .skill-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: .9rem;
+    margin-bottom: 10px; color: var(--text);
+  }
+  .skill-items { list-style: none; }
+  .skill-items li {
+    font-size: .78rem; color: var(--muted);
+    padding: 3px 0;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .skill-items li::before {
+    content: '›'; color: var(--accent); font-size: .9rem;
+  }
+
+  /* ── PROJECTS ── */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    gap: 24px;
+  }
+  .project-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 30px 26px;
+    position: relative;
+    overflow: hidden;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .project-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    opacity: 0;
+    transition: opacity .2s;
+  }
+  .project-card:hover { transform: translateY(-5px); box-shadow: 0 20px 48px rgba(0,0,0,.4); }
+  .project-card:hover::before { opacity: 1; }
+  .project-num {
+    font-size: .68rem; letter-spacing: .2em; color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .project-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem; font-weight: 700;
+    margin-bottom: 12px; line-height: 1.3;
+  }
+  .project-desc { color: var(--muted); font-size: .82rem; line-height: 1.65; }
+  .project-tags {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-top: 18px;
+  }
+  .tag {
+    background: rgba(124,106,247,.12);
+    border: 1px solid rgba(124,106,247,.25);
+    color: var(--accent2);
+    font-size: .68rem; letter-spacing: .08em; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 4px;
+  }
+
+  /* ── EXPERIENCE ── */
+  #experience { background: var(--surface); }
+  .exp-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 32px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 20px;
+    align-items: start;
+    transition: border-color .2s;
+  }
+  .exp-card:hover { border-color: var(--accent2); }
+  .exp-role {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.15rem; font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .exp-company { color: var(--accent); font-size: .85rem; margin-bottom: 12px; }
+  .exp-desc { color: var(--muted); font-size: .83rem; line-height: 1.7; }
+  .exp-period {
+    background: rgba(0,229,192,.08);
+    border: 1px solid rgba(0,229,192,.2);
+    color: var(--accent);
+    font-size: .7rem; letter-spacing: .1em;
+    padding: 6px 12px; border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  /* ── EDUCATION ── */
+  .edu-timeline { position: relative; padding-left: 28px; }
+  .edu-timeline::before {
+    content: '';
+    position: absolute; left: 7px; top: 8px; bottom: 8px;
+    width: 2px;
+    background: linear-gradient(180deg, var(--accent), var(--accent2), transparent);
+  }
+  .edu-item {
+    position: relative;
+    margin-bottom: 40px;
+  }
+  .edu-item::before {
+    content: '';
+    position: absolute; left: -24px; top: 8px;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 10px var(--accent);
+  }
+  .edu-year { font-size: .7rem; letter-spacing: .15em; color: var(--accent3); text-transform: uppercase; margin-bottom: 4px; }
+  .edu-degree { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 2px; }
+  .edu-school { color: var(--muted); font-size: .82rem; margin-bottom: 6px; }
+  .edu-score {
+    display: inline-block;
+    background: rgba(247,194,106,.1);
+    border: 1px solid rgba(247,194,106,.25);
+    color: var(--accent3);
+    font-size: .72rem; padding: 3px 10px; border-radius: 4px;
+  }
+
+  /* ── ACHIEVEMENTS ── */
+  .ach-list { list-style: none; }
+  .ach-list li {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--muted); font-size: .85rem;
+  }
+  .ach-list li:last-child { border-bottom: none; }
+  .ach-icon {
+    flex-shrink: 0;
+    width: 32px; height: 32px;
+    background: rgba(0,229,192,.08);
+    border: 1px solid rgba(0,229,192,.2);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .9rem;
+  }
+
+  /* ── CONTACT ── */
+  #contact { text-align: center; padding-bottom: 120px; }
+  #contact .hero-sub { margin: 16px auto 40px; max-width: 460px; }
+  .contact-links {
+    display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 28px 0;
+    text-align: center;
+    color: var(--muted);
+    font-size: .72rem;
+    letter-spacing: .1em;
+    position: relative; z-index: 2;
+  }
+
+  /* ── ANIMATIONS ── */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  .fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (max-width: 700px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .hero-badge { display: none; }
+    #about .about-grid { grid-template-columns: 1fr; }
+    .exp-card { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div id="cursor-glow"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="inner">
+    <a href="#hero" class="nav-logo">SN/</a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <div class="hero-tag fade-up">ECE Undergraduate · Batch of 2027</div>
+        <h1 class="fade-up">Syed<br/><span class="accent">Nahiya</span></h1>
+        <p class="hero-sub fade-up">Building at the intersection of hardware and intelligence — embedded systems, VLSI design, and signal processing.</p>
+        <div class="hero-cta fade-up">
+          <a href="#projects" class="btn btn-primary">View Projects ↓</a>
+          <a href="mailto:nahiyasyed2@gmail.com" class="btn btn-outline">Get in Touch</a>
+        </div>
+      </div>
+      <!-- Replace the hero-badge div with this -->
+<div class="hero-badge fade-up">
+  <img 
+    src="profile.jpeg" 
+    alt="Syed Nahiya" 
+    style="
+      width: 200px;
+      height: 200px;
+      object-fit: cover;
+      border: 2px solid var(--accent);
+      box-shadow: 0 0 28px rgba(0,229,192,0.25);
+      display: block;
+    "
+  />
+</div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="section-num">01 / About</div>
+      <h2>Who I Am</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="about-grid">
+      <div class="about-text fade-up">
+        <p>I'm a <span>third-year ECE student</span> at Vignan's Nirula Institute of Technology and Sciences for Women, Guntur, with a deep passion for embedded systems and hardware design.</p>
+        <p>My work spans <span>microcontroller-based systems, PCB design, VLSI RTL development,</span> and signal processing — bridging theoretical fundamentals with real-world implementation.</p>
+        <p>I thrive on solving complex engineering problems, from designing eye-tracking control systems to creating verified Verilog RTL pipelines during my VLSI internship.</p>
+      </div>
+      <div class="info-card fade-up">
+        <div class="info-row">
+          <span class="info-key">Email</span>
+          <span class="info-val"><a href="mailto:nahiyasyed2@gmail.com">nahiyasyed2@gmail.com</a></span>
+        </div>
+        <div class="info-row">
+          <span class="info-key">Phone</span>
+          <span class="info-val">+91 81067 13192</span>
+        </div>
+        <div class="info-row">
+          <span class="info-key">Degree</span>
+          <span class="info-val">B.Tech ECE (2023–2027)</span>
+        </div>
+        <div class="info-row">
+          <span class="info-key">College</span>
+          <span class="info-val">Vignan's NITS for Women, Guntur</span>
+        </div>
+        <div class="info-row">
+          <span class="info-key">GitHub</span>
+          <span class="info-val"><a href="#">github.com/nahiya</a></span>
+        </div>
+        <div class="info-row">
+          <span class="info-key">LinkedIn</span>
+          <span class="info-val"><a href="#">linkedin.com/in/nahiya</a></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="section-num">02 / Skills</div>
+      <h2>Technical Arsenal</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="skills-grid">
+      <div class="skill-card fade-up">
+        <div class="skill-icon">💻</div>
+        <div class="skill-title">Programming</div>
+        <ul class="skill-items">
+          <li>C / Embedded C</li>
+          <li>Python</li>
+          <li>Verilog HDL</li>
+          <li>Web Development</li>
+        </ul>
+      </div>
+      <div class="skill-card fade-up">
+        <div class="skill-icon">⚡</div>
+        <div class="skill-title">Technical Core</div>
+        <ul class="skill-items">
+          <li>Communication Systems</li>
+          <li>VLSI Design Basics</li>
+          <li>PCB Design</li>
+          <li>Signal Processing</li>
+        </ul>
+      </div>
+      <div class="skill-card fade-up">
+        <div class="skill-icon">🛠</div>
+        <div class="skill-title">EDA & Tools</div>
+        <ul class="skill-items">
+          <li>MATLAB / Simulink</li>
+          <li>Multisim</li>
+          <li>Proteus</li>
+          <li>ModelSim</li>
+        </ul>
+      </div>
+      <div class="skill-card fade-up">
+        <div class="skill-icon">🤝</div>
+        <div class="skill-title">Soft Skills</div>
+        <ul class="skill-items">
+          <li>Problem Solving</li>
+          <li>Team Collaboration</li>
+          <li>Communication</li>
+          <li>Technical Workshops</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="section-num">03 / Projects</div>
+      <h2>Things I've Built</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="projects-grid">
+      <div class="project-card fade-up">
+        <div class="project-num">Project — 01</div>
+        <div class="project-title">Arduino-Based PCB Design</div>
+        <p class="project-desc">Designed and implemented complete PCB layouts from schematic to physical board. Managed the full lifecycle including circuit design, component placement, trace routing, testing, and iterative debugging to achieve functional hardware.</p>
+        <div class="project-tags">
+          <span class="tag">Arduino</span>
+          <span class="tag">PCB Design</span>
+          <span class="tag">Proteus</span>
+          <span class="tag">Hardware</span>
+        </div>
+      </div>
+      <div class="project-card fade-up">
+        <div class="project-num">Project — 02</div>
+        <div class="project-title">Eye-Controlled Wheelchair</div>
+        <p class="project-desc">Developed an assistive mobility system that translates eye movement signals into wheelchair directional commands via a microcontroller interface. Enables hands-free, accessible control for individuals with motor impairments.</p>
+        <div class="project-tags">
+          <span class="tag">Microcontroller</span>
+          <span class="tag">Eye Tracking</span>
+          <span class="tag">Embedded C</span>
+          <span class="tag">Assistive Tech</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="section-num">04 / Experience</div>
+      <h2>Work Experience</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="exp-card fade-up">
+      <div>
+        <div class="exp-role">VLSI Design Intern</div>
+        <div class="exp-company">SkillDzire</div>
+        <p class="exp-desc">Worked on Verilog-based RTL design, writing and verifying hardware description code for digital circuits. Performed simulation and functional verification using ModelSim, and gained hands-on exposure to the basic ASIC design flow from RTL through synthesis.</p>
+      </div>
+      <div class="exp-period">May 2025 – Jun 2026</div>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="section-num">05 / Education</div>
+      <h2>Academic Background</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="edu-timeline">
+      <div class="edu-item fade-up">
+        <div class="edu-year">2023 – 2027</div>
+        <div class="edu-degree">B.Tech — Electronics & Communication Engineering</div>
+        <div class="edu-school">Vignan's Nirula Institute of Technology and Sciences for Women, Guntur</div>
+        <span class="edu-score">CGPA: 8.5 / 10</span>
+      </div>
+      <div class="edu-item fade-up">
+        <div class="edu-year">2022</div>
+        <div class="edu-degree">Class XII (Intermediate)</div>
+        <div class="edu-school">KSK Junior College, Bhattiprolu</div>
+        <span class="edu-score">92.9%</span>
+      </div>
+      <div class="edu-item fade-up">
+        <div class="edu-year">2020</div>
+        <div class="edu-degree">Class X (Secondary School)</div>
+        <div class="edu-school">Viswasanthi English Medium School, Bhattiprolu</div>
+        <span class="edu-score">96%</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ACHIEVEMENTS -->
+<section id="achievements" style="background: var(--surface);">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="section-num">06 / Achievements</div>
+      <h2>Highlights</h2>
+      <div class="divider"></div>
+    </div>
+    <ul class="ach-list fade-up">
+      <li>
+        <div class="ach-icon">🏢</div>
+        Completed VLSI internship at SkillDzire, gaining industry-level experience in RTL design and ASIC flow.
+      </li>
+      <li>
+        <div class="ach-icon">♿</div>
+        Developed an Eye-Controlled Wheelchair — a socially impactful assistive technology project.
+      </li>
+      <li>
+        <div class="ach-icon">🔌</div>
+        Successfully designed, tested, and debugged an Arduino-based PCB project end-to-end.
+      </li>
+      <li>
+        <div class="ach-icon">🎓</div>
+        Hands-on experience with industry-standard EDA tools including ModelSim, Proteus, Multisim, and MATLAB.
+      </li>
+      <li>
+        <div class="ach-icon">🎤</div>
+        Actively participated in technical workshops, expanding domain knowledge beyond curriculum.
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="container">
+    <div class="section-header fade-up" style="text-align:center;">
+      <div class="section-num" style="text-align:center;">07 / Contact</div>
+      <h2>Let's Connect</h2>
+      <div class="divider" style="margin:14px auto 0;"></div>
+    </div>
+    <p class="hero-sub fade-up">Interested in collaborating, discussing ECE projects, or just saying hi? My inbox is always open.</p>
+    <div class="contact-links fade-up">
+      <a href="mailto:nahiyasyed2@gmail.com" class="btn btn-primary">✉ nahiyasyed2@gmail.com</a>
+      <a href="tel:+918106713192" class="btn btn-outline">📞 +91 81067 13192</a>
+      <a href="https://github.com/nahiyasyed2-art" class="btn btn-outline">GitHub</a>
+      <a href="https://www.linkedin.com/in/nahiya-syed-a29b75354?utm_source=share_via&utm_content=profile&utm_medium=member_android" class="btn btn-outline">LinkedIn</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>Designed & built with intention — Syed Nahiya © 2026</p>
+</footer>
+
+<script>
+  // Cursor glow
+  const glow = document.getElementById('cursor-glow');
+  document.addEventListener('mousemove', e => {
+    glow.style.left = e.clientX + 'px';
+    glow.style.top = e.clientY + 'px';
+  });
+
+  // Scroll reveal
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        e.target.style.transitionDelay = (i * 0.07) + 's';
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
